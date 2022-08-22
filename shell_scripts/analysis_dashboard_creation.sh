@@ -1,0 +1,12 @@
+#Creating Template in quicksight from the prepared json for Analysis-Template:
+aws quicksight create-template --aws-account-id $1 --cli-input-json file://$5/Analysis/create-template.json >>log.txt
+sleep 3
+
+#Creating json for Analysis:
+echo ['{"AwsAccountId":"'$1'","TemplateId":"'$3'","AnalysisId":"'$2'"}', `aws quicksight describe-template --aws-account-id $1 --template-id $3`, `aws quicksight describe-analysis --aws-account-id $1 --analysis-id $2`, `aws quicksight describe-analysis-permissions --aws-account-id $1 --analysis-id $2`]|jq '{"AwsAccountId":.[0].AwsAccountId,"AnalysisId":(.[2].Analysis.AnalysisId),"Name":(.[2].Analysis.Name),"SourceEntity":{"SourceTemplate":{"Arn":.[1].Template.Arn,"DataSetReferences":[{	"DataSetPlaceholder":"DS1","DataSetArn":(.[2].Analysis.DataSetArns[0])},{"DataSetPlaceholder":"DS2","DataSetArn":(.[2].Analysis.DataSetArns[1])},{"DataSetPlaceholder":"DS3","DataSetArn":(.[2].Analysis.DataSetArns[2])},{	"DataSetPlaceholder":"DS4","DataSetArn":(.[2].Analysis.DataSetArns[3])},{"DataSetPlaceholder":"DS5","DataSetArn":(.[2].Analysis.DataSetArns[4])}]}},"ThemeArn":.[2].Analysis.ThemeArn,"Permissions":.[3].Permissions}'>$5/Analysis/create-analysis.json
+
+#Creating json for Dashboard:
+echo ['{"AwsAccountId":"'$1'","TemplateId":"'$3'","DashboardId":"'$4'"}', `aws quicksight describe-template --aws-account-id $1 --template-id $3`, `aws quicksight describe-dashboard --aws-account-id $1 --dashboard-id $4`, `aws quicksight describe-dashboard-permissions --aws-account-id $1 --dashboard-id $4`]|jq '{"AwsAccountId":.[0].AwsAccountId,"DashboardId":(.[2].Dashboard.DashboardId), "Name":(.[2].Dashboard.Name),"SourceEntity":{"SourceTemplate":{"Arn":.[1].Template.Arn,"DataSetReferences":[{"DataSetPlaceholder":"DS1", "DataSetArn":(.[2].Dashboard.Version.DataSetArns[0])},{"DataSetPlaceholder":"DS2","DataSetArn":(.[2].Dashboard.Version.DataSetArns[1])},{ "DataSetPlaceholder":"DS3","DataSetArn":(.[2].Dashboard.Version.DataSetArns[2])},{ "DataSetPlaceholder":"DS4","DataSetArn":(.[2].Dashboard.Version.DataSetArns[3])},{ "DataSetPlaceholder":"DS5","DataSetArn":(.[2].Dashboard.Version.DataSetArns[4])}]}}, "ThemeArn":(.[2].Dashboard.Version.ThemeArn),"Permissions":.[3].Permissions,"DashboardPublishOptions":{"AdHocFilteringOption":{"AvailabilityStatus":"DISABLED"}}}'>$5/Dashboard/create-dashboard.json
+
+echo "
+#Data Source Id ==> ">>$5/Ids.txt
