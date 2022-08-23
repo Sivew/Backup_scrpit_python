@@ -20,19 +20,19 @@ Dashboard_desc = client.describe_dashboard(
 )
 #Dashboard Name ==> 
 Dashboard_Name=Dashboard_desc['Dashboard']['Name']
-Dashboard_Name="".join(re.split(r'[\\\/\ ]', Dashboard_Name))
+Dashboard_Name="".join(re.split(r'[\\\-\/\ ]', Dashboard_Name))
 
 #Analysis ID ==> 
 #Describing Dashbaord to fetch the analysis id
 Arn=Dashboard_desc['Dashboard']['Version']['SourceEntityArn']
-AnalysisId = Arn[-36:]
+AnalysisId = Arn[51:]
 
 #Data Set Id ==> in list
 #Describing Dashbaord and iterating over the number of datasets to fetch the data set ids
 DSetId=[]
 datasets=Dashboard_desc['Dashboard']['Version']['DataSetArns']
 for n in datasets:
-    DSetId.append(n[-36:])  #List of Datasets
+    DSetId.append(n[50:])  #List of Datasets
 
 #Data Source Id ==> in list
 #Iterating and describing the fetched dataset to fetch the data source ids
@@ -44,7 +44,7 @@ for n in DSetId:
     )
     mid_value1=dataset_desc['DataSet']['PhysicalTableMap']
     datasources=dataset_desc['DataSet']['PhysicalTableMap'][list(mid_value1.keys())[0]]['RelationalTable']['DataSourceArn']
-    DSourceId.append(datasources[-36:])  #List of Datasources
+    DSourceId.append(datasources[53:])  #List of Datasources
 
 #Template ID ==> 
 TemplateId=Dashboard_Name
